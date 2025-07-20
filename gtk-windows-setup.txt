@@ -1,0 +1,137 @@
+🎞️ Step 1: Download and Install MSYS2
+Text:
+    1. Visit https://www.msys2.org
+    2. Download msys2-x86_64-*.exe
+    3. Run the installer → install to default C:\msys64
+    4. Finish and launch MSYS2 MSYS terminal
+
+
+🎞️ Step 2: Update MSYS2 System
+Text:
+Open MSYS2 MSYS terminal and run:
+
+command: pacman -Syu
+After update, close terminal
+Re-open and run:
+
+command: pacman -Su
+
+
+🎞️ Step 3: Install GCC and GTK
+Text:
+Switch to terminal: MSYS2 MinGW UCRT 64-bit
+Then run:
+
+command: pacman -S mingw-w64-ucrt-x86_64-toolchain
+Select "all" → press Enter
+Then install GTK 3:
+
+command: pacman -S mingw-w64-ucrt-x86_64-gtk3
+
+
+Step 4: Install VS Code and Extensions
+Text:
+    1. Download & install from https://code.visualstudio.com
+    2. Install these extensions:
+        ◦ C/C++ (by Microsoft)
+        ◦ Code Runner (optional)
+        ◦ CMake Tools (optional)
+
+🎞️ Step 5: Open Correct MSYS2 Terminal in VS Code
+Text:
+    1. Open VS Code → Ctrl+Shift+P → "Terminal: Select Default Profile"
+    2. Choose: MSYS2 MinGW UCRT 64-bit
+    3. Open Terminal (Ctrl + ~) → will open the correct shell
+
+
+🎞️ Step 6: Create New GTK C File in VS Code
+Text:
+    • Create a folder, e.g. gtk-demo
+    • Inside it, create a file main.c
+    • Write your GTK code (same as earlier slide)
+    • Save the file
+
+
+Step 7: Enable IntelliSense in VS Code with GTK
+Title: Why Configure IntelliSense in VS Code?
+Content:
+    • VS Code needs to know where GTK header files are.
+    • Otherwise, you’ll see red squiggly errors even if the code is fine.
+    • This is done by configuring c_cpp_properties.json.
+
+🎞️ Step 8: Where to Create This File?
+Title: Steps to Add c_cpp_properties.json
+Content:
+    1. In VS Code, open your project folder.
+    2. Go to .vscode folder (create if not present).
+    3. Inside it, create a file named c_cpp_properties.json.
+
+
+🎞️ Step 9: Windows Configuration for MSYS2 + GTK
+Title: Sample Configuration for MSYS2 (UCRT64)
+Content (code snippet):
+
+{
+  "configurations": [
+    {
+      "name": "Windows",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "C:/msys64/ucrt64/include/gtk-3.0",
+        "C:/msys64/ucrt64/include/glib-2.0",
+        "C:/msys64/ucrt64/lib/glib-2.0/include",
+        "C:/msys64/ucrt64/include/pango-1.0",
+        "C:/msys64/ucrt64/include/cairo",
+        "C:/msys64/ucrt64/include/gdk-pixbuf-2.0",
+        "C:/msys64/ucrt64/include/atk-1.0",
+        "C:/msys64/ucrt64/include/harfbuzz",
+        "C:/msys64/ucrt64/include/freetype2",
+        "C:/msys64/ucrt64/include/libpng16"
+      ],
+      "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-gcc-x64"
+    }
+  ],
+  "version": 4
+}
+
+
+Step 10: Write a Sample GTK C Program
+Text (show code file name): main.c
+
+#include <gtk/gtk.h>
+
+int main(int argc, char *argv[]) {
+    gtk_init(&argc, &argv);
+
+    // Load the UI from Glade file
+    GtkBuilder *builder = gtk_builder_new_from_file("main.ui");
+
+    // Get window and widgets by ID
+    GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
+    GtkWidget *button = GTK_WIDGET(gtk_builder_get_object(builder, "my_button"));
+
+    // Connect signals
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(button, "clicked", G_CALLBACK(gtk_main_quit), NULL); // You can replace this with custom function
+
+    gtk_widget_show_all(window);
+    gtk_main();
+
+    return 0;
+}
+
+
+🎞️ Step 11: Compile the GTK Program
+Text:
+
+gcc `pkg-config --cflags gtk+-3.0` main.c -o app `pkg-config --libs gtk+-3.0`
+
+If successful, it creates hello.exe.
+
+🎞️ Slide 12: Run and See the Output
+Text:
+
+command: ./app
